@@ -52,13 +52,16 @@ command = "npx"
 args = ["@playwright/mcp@latest", "--cdp-endpoint", "http://127.0.0.1:9222"]
 ```
 
-### Step 2: install the skill
+### Step 2: install the skills
 ```bash
 npx skills add bftelman/teamskills
 ```
-Options: add `-s teams` for just this skill, or pass a hosted URL to `teams/SKILL.md`. Manual
-alternative: copy the `teams/` folder into your agent's skills directory. Claude Code slash command:
-also copy `commands/setup-teams.md` into `~/.claude/commands/`.
+This installs two skills: `teams` (the capability) and `setup-teams` (the one-shot installer). In
+Claude Code both are then invocable as `/teams` and `/setup-teams`. Options: add `-s teams` for just
+the main skill, or pass a hosted URL to a `SKILL.md`. Manual alternative: copy the `teams/` and
+`setup-teams/` folders into your agent's skills directory. (The root `commands/setup-teams.md` is an
+optional native Claude Code slash-command variant; not needed if you installed the `setup-teams`
+skill above.)
 
 ### Step 3: restart the agent
 Once, so it loads the new MCP server and the skill.
@@ -77,7 +80,8 @@ added in Step 1, this runs straight through with no mid-setup restart.
 | `teams/teams-chrome.ps1` | Windows launcher for debug Chrome (dedicated profile, IPv4 :9222). |
 | `teams/teams-chrome.sh` | macOS / Linux launcher (Chrome, Chromium, or Edge). |
 | `teams/INSTALL.md` | Setup detail: per-agent MCP config, first-run login. |
-| `commands/setup-teams.md` | Claude Code `/setup-teams` slash command (copy to `~/.claude/commands/`). |
+| `setup-teams/SKILL.md` | The one-shot installer skill (auto-installed; invoke as `/setup-teams`). |
+| `commands/setup-teams.md` | Optional native Claude Code slash-command variant (manual copy). |
 
 ## Safety
 The skill confirms before every send, react, and @mention (they notify real people). Test safely
