@@ -4,8 +4,8 @@ Drive Microsoft Teams (new web client) from your coding agent via the Playwright
 Chrome, with no Microsoft Graph / API. Read and catch up, send, quote-reply, react (emoji), and
 @mention. Chats only (no calls, files, or channel posts yet).
 
-Cross-agent (Claude Code, Cursor, Copilot / VS Code, Codex, Windsurf) and cross-platform (Windows,
-macOS, Linux). Packaged for the [`skills` CLI](https://skills.sh/) (`npx skills`).
+Cross-agent (Claude Code, Cursor, Copilot / VS Code, Codex, Windsurf, OpenCode) and cross-platform
+(Windows, macOS, Linux). Packaged for the [`skills` CLI](https://skills.sh/) (`npx skills`).
 
 ## Install (MCP first, so it is ready before first use)
 
@@ -50,6 +50,20 @@ claude mcp add -s user playwright -- npx @playwright/mcp@latest --cdp-endpoint h
 [mcp_servers.playwright]
 command = "npx"
 args = ["@playwright/mcp@latest", "--cdp-endpoint", "http://127.0.0.1:9222"]
+```
+
+**OpenCode** (`opencode.json`, or `~/.config/opencode/opencode.json`; note `command` is one array)
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest", "--cdp-endpoint", "http://127.0.0.1:9222"],
+      "enabled": true
+    }
+  }
+}
 ```
 
 ### Step 2: install the skills

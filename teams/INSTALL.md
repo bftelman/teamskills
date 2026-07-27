@@ -23,8 +23,10 @@ npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222
 ```
 Use `127.0.0.1`, NOT `localhost` (localhost → IPv6 `::1`, which the debug port refuses).
 - **Claude Code:** `claude mcp add -s user playwright -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222`
-- **Cursor / VS Code / Windsurf / Codex:** add the same command+args under `mcpServers` in that
-  agent's MCP config file (`.cursor/mcp.json`, `.vscode/mcp.json`, `~/.codeium/windsurf/mcp_config.json`, …).
+- **Cursor / VS Code / Windsurf / Codex / OpenCode:** add the same command+args in that agent's MCP
+  config (`.cursor/mcp.json`, `.vscode/mcp.json` [key `servers`], `~/.codeium/windsurf/mcp_config.json`,
+  `~/.codex/config.toml` [TOML], `opencode.json` [`mcp`, `command` as an array]). See the top-level
+  README for a ready-to-paste block per agent.
 
 Restart the agent so it spawns the server.
 
