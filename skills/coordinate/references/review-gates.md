@@ -2,6 +2,19 @@
 
 Run these in order on every report, before and after each fix round. Stop at the first failure and send a fix round.
 
+## Gate 0 — did the delegate actually finish?
+
+`opencode run` **exits 0 on a session that died mid-run.** The exit code proves nothing.
+
+```bash
+ls <scratchpad>/report.md          # the report you asked for in the prompt
+git -C <repo> status --porcelain   # must be non-empty
+```
+
+No report file, or an empty tree, means the session died — there is nothing to review, and every later gate would be reviewing claims that were never made. Resume with `--continue` (the delegate keeps its research context, so this is cheap) rather than re-dispatching from scratch.
+
+A session can also die *after* writing files but *before* reporting. So when the report is missing but the tree is not, do not assume the work is partial in the way it looks — re-check the tree after the resume completes, because a still-running session will keep writing while you are reading.
+
 ## Gate 1 — files outside scope
 
 ```bash
@@ -14,6 +27,8 @@ Compare against the report's file list and against the ticket's scope. Anything 
 ```bash
 git -C <repo> checkout -- <unrelated-path>
 ```
+
+**Re-run this gate immediately before the commit, not only after the report.** Your own verification builds mutate the tree: checked-in generated artifacts (swagger, lockfiles) get rewritten by every build you run, and crash dumps appear as untracked files. Churn you created yourself is still churn in the MR, and it is the coordinator, not the delegate, who put it there. One observed run regenerated 15 generated files across services nobody touched, purely from a build and a test invocation.
 
 ## Gate 2 — read the diff of the entry points
 
@@ -53,6 +68,10 @@ Real cases. Each row is a claim that passed casual reading and failed a gate.
 | "No deviations from the contract" | An 85-line method left in the service, on no interface, never called | Gate 3 |
 | "Streaming endpoint, 404 handled" | `Response.StatusCode` assigned after `Response.CompleteAsync()` — throws, and unreachable anyway | Gate 2 |
 | "Existing cases already use base X" (contradicting the coordinator) | Delegate was right; the coordinator's grep came from another branch | Gate 6 |
+| Exit code 0, no report, no message | Session died mid-run; working tree completely untouched | Gate 0 |
+| Exit code 0, one file changed, no report | Session was *still running* and wrote the rest during the review | Gate 0 |
+| Code that "builds" | Two `CS0103` errors: `nameof(X)` where X is a member of the injected interface, not of the class, and `{Param}` capitalised inside an interpolated string (valid in a structured-log template, a compile error in `$"..."`) | Gate 4 — the delegate never reached a build |
+| Diff of 2 intended files | Plus 15 regenerated `*.swagger.json` and a `bash.exe.stackdump`, all caused by the **coordinator's** verification builds | Gate 1, re-run before commit |
 
 When you hit a failure mode that is not in this table, add a row. That is the mechanism, not an afterthought — see [self-improvement.md](self-improvement.md).
 

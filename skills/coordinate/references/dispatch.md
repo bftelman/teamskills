@@ -21,6 +21,23 @@ Ask each delegate to write its report to a scratchpad path as well as ending its
 
 Cheap by default. Deepseek handles house-pattern implementation, tests, and mechanical sweeps. Raise the delegate tier only when a fix round shows it cannot hold the problem — two failed rounds on the same finding is the signal, not a hunch.
 
+### Session death is not incapacity — treat them differently
+
+Two failure shapes look alike in a log and call for opposite responses:
+
+| Shape | What it means | Response |
+|---|---|---|
+| Delegate produces wrong code, twice, on the same finding | It cannot hold the problem | Raise the tier |
+| Session ends mid-run — truncated log, no report, exit 0 | Infrastructure, not comprehension | `--continue`; the research context survives |
+
+Free tiers die silently and often. A resume is cheap precisely because the delegate has already read the repo, so prefer it over re-dispatching. But cap it: **after two deaths on the same task, switch model or take the work back.** Three truncated sessions on one small task cost more than writing it would have.
+
+When you resume after a death, say explicitly in the prompt that nothing landed and tell it to confirm with `git diff --stat` — otherwise it may assume its earlier edits succeeded and build on work that does not exist.
+
+### Tool-call mechanics are a real failure mode on cheap tiers
+
+Delegates lose whole sessions to exact-string edit failures on files with CRLF endings or irregular indentation. If a delegate reports or shows a failed edit, tell it to anchor on a larger unique block, or to rewrite the file wholesale, rather than retrying ever-smaller snippets.
+
 ## The prompt recipe
 
 A dispatch prompt is these parts, in this order:

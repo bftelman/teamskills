@@ -40,6 +40,8 @@ The honest bar is a delegate run: dispatch a task that would have triggered the 
 
 Kept current deliberately — an empty list here means nobody is looking.
 
-- The dispatch prompt recipe and the gates were derived from observed delegate failures on a two-repo .NET + Angular story. They have not been pressure-tested against a single-delegate mechanical task, where the overhead may not pay for itself.
+- ~~Not pressure-tested against a single-delegate mechanical task, where the overhead may not pay for itself.~~ **Answered: it does not pay.** A single-file fix with the root cause already established in the ticket came in at ~8.8 KB of contract-plus-prompt for a 113-line diff, ~50k coordinator tokens against ~13k of delegate transcript avoided. This produced the size gate in SKILL.md. Note that the *tests* (95 of those 113 lines) delegated well — the floor applies to the deliverable as a whole, so a thin fix with broad test coverage can still qualify.
 - No guidance yet on delegate count above two, or on delegates that must hand off sequentially rather than build in parallel to a contract.
 - The coordinator tier table has not been tested at the Haiku end.
+- The gates assume a delegate that finishes and reports. Gate 0 now catches the dead-session case, but the skill still has no guidance on a delegate that dies *repeatedly* on a task genuinely too large for one session — whether to split the task or escalate the tier.
+- Untested: whether a delegate can reliably drive tracker/MCP work at all. The one attempt was blocked by a server outage, so the "offload the retry loop" advice in sdlc-delegation.md is reasoned, not observed.
