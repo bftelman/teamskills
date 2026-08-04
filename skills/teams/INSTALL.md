@@ -11,7 +11,7 @@ OS-specific.
 ## 1. Install the skill
 - **Via the `skills` CLI (any supported agent):** `npx skills add bftelman/skills -s teams`
   (needs Node ≥ 22.20).
-- **Manual:** copy this repo's `teams/teams/` folder into your agent's skills directory — Claude Code
+- **Manual:** copy this repo's `skills/teams/teams/` folder into your agent's skills directory — Claude Code
   `~/.claude/skills/teams/` (or `<repo>/.claude/skills/teams/`); other agents use their own path.
 
 Files: `SKILL.md`, `selectors.md`, `chats.md` (empty template — fill per user), `teams-chrome.ps1`
