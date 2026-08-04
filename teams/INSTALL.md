@@ -9,8 +9,9 @@ Linux). The skill uses the Playwright MCP's standard `browser_*` tools; only the
 OS-specific.
 
 ## 1. Install the skill
-- **Via the `skills` CLI (any supported agent):** `npx skills add <owner>/<repo>` (needs Node ≥ 22.20).
-- **Manual:** copy the `teams/` folder into your agent's skills directory — Claude Code
+- **Via the `skills` CLI (any supported agent):** `npx skills add bftelman/claude-skills -s teams`
+  (needs Node ≥ 22.20).
+- **Manual:** copy this repo's `teams/teams/` folder into your agent's skills directory — Claude Code
   `~/.claude/skills/teams/` (or `<repo>/.claude/skills/teams/`); other agents use their own path.
 
 Files: `SKILL.md`, `selectors.md`, `chats.md` (empty template — fill per user), `teams-chrome.ps1`
