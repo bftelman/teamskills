@@ -25,6 +25,16 @@ You are the tech lead on this task, not the typist. Implementation goes to `open
 - You are debugging, and the investigation loop *is* the work; delegate the fix once you know the cause
 - The design is unsettled — settle it first (brainstorm, ask the user), then delegate. A delegate building to a wrong contract wastes its work and yours
 
+### Size gate — run this before writing the contract
+
+Coordination has a floor cost: a contract file, a dispatch prompt, a review pass, and a gate sweep. Below that floor it is pure overhead.
+
+Estimate the total lines you expect back. **If the contract plus the prompt is longer than the diff you expect, you are the wrong tool — write it yourself.**
+
+Observed loss: an ~8.8 KB contract-plus-prompt for a 113-line diff, of which 18 lines were production code. The delegate transcript kept ~13k tokens out of context; coordinating it cost ~50k. A single-file fix with a root cause already established in the ticket is below the floor — the tests were the only part with enough bulk to be worth delegating.
+
+The ratio is the signal, and it is knowable *before* you dispatch. Check it at the point where you are about to write the contract, not after the reports come back.
+
 ## Pick Your Own Tier First
 
 Delegates always run cheap. Your own model tier is the decision, and it depends on how expensive a wrong contract would be.
@@ -43,12 +53,13 @@ Delegates always run cheap. Your own model tier is the decision, and it depends 
 2. **Freeze the contract before dispatching** (required whenever two or more delegates touch a shared interface). Write it to a file, then embed it verbatim in every prompt. State that it is frozen and that a delegate who finds it impossible must stop and report rather than invent an alternative. Contract facts must be verified against the branch the delegate will actually work on — not a neighbouring feature branch.
 3. **Create the branches yourself** from a freshly fetched default branch, so naming follows the repo guardrail and both delegates start clean.
 4. **Dispatch in parallel, in the background**, logging to files you can tail. See [dispatch.md](references/dispatch.md) for the command and the prompt recipe.
-5. **Move the Jira issues to In Progress** as soon as work starts.
-6. **Review each report against the repo** — the gates in [review-gates.md](references/review-gates.md), in order. Never skip the diff-stat check for out-of-scope files.
-7. **Push back with a fix round** rather than fixing it yourself: `opencode run --continue` keeps the delegate's context, so a fix round is cheap. Give it a numbered list of findings and tell it to report per item, including any it disagrees with.
-8. **Re-verify after the fix round.** Same gates. A fix round is when regressions and "excluded" tests appear.
-9. **Approve, then let the delegate execute the SDLC steps** — commit, push, MR, Jira transitions. See [sdlc-delegation.md](references/sdlc-delegation.md).
-10. **Patch this skill** if you hit a gap. See [self-improvement.md](references/self-improvement.md).
+5. **Move the Jira issues to In Progress** as soon as work starts — but do not let ticket bookkeeping block the run. One timeout from the tracker and you defer the step and carry on; see [sdlc-delegation.md](references/sdlc-delegation.md).
+6. **Confirm the delegate actually finished** before reviewing anything it claims. Gate 0 in [review-gates.md](references/review-gates.md) — a dead session can exit 0 with an empty tree.
+7. **Review each report against the repo** — the gates in [review-gates.md](references/review-gates.md), in order. Never skip the diff-stat check for out-of-scope files.
+8. **Push back with a fix round** rather than fixing it yourself: `opencode run --continue` keeps the delegate's context, so a fix round is cheap. Give it a numbered list of findings and tell it to report per item, including any it disagrees with.
+9. **Re-verify after the fix round.** Same gates. A fix round is when regressions and "excluded" tests appear.
+10. **Approve, then let the delegate execute the SDLC steps** — commit, push, MR, Jira transitions. See [sdlc-delegation.md](references/sdlc-delegation.md).
+11. **Patch this skill** if you hit a gap. See [self-improvement.md](references/self-improvement.md).
 
 ## Approval Gate
 
@@ -72,6 +83,11 @@ When the task is done, tell the user what delegating bought: tokens of delegate 
 - Accepting a test count you did not run
 - Dispatching a second delegate on a shared interface without a frozen contract
 - Letting a delegate open an MR before the user approved
+- Writing a contract longer than the code it describes — check the size gate instead of dispatching
+- Reviewing a report when the working tree is empty — you are reviewing a dead session's claims
+- Retrying a hanging external service a third time in your own context
+
+Note the asymmetry: every flag above this block is about *under*-reviewing. Over-machinery on a task below the size gate produces no failing gate and no bad diff — it just costs more than it saves, and nothing in a review catches that. The size gate is the only defence.
 
 ## Rationalization Table
 
@@ -84,3 +100,7 @@ When the task is done, tell the user what delegating bought: tokens of delegate 
 | "Both sides say they match the contract" | Compare the two sides' actual code to each other, not each side to its own claim. |
 | "It built, so it's fine" | Building is the floor, not the bar. |
 | "I'll approve the push and review the MR later" | Review before the push is review; after is cleanup. |
+| "Coordinating is the safe default" | It has a floor cost. Below the size gate it is overhead that no gate will flag. |
+| "The delegate exited 0, so it did the work" | Exit 0 with an empty tree and no report file is a dead session. Gate 0. |
+| "It only needs two more one-word fixes, I'll do them" | Fine — and then say so plainly in the offload report. Undisclosed coordinator edits make the next size-gate estimate wrong. |
+| "The tracker will respond on the next retry" | Three 300s timeouts is a down service. Defer the step; do not serialise the run behind it. |
