@@ -1,4 +1,4 @@
-# claude-skills — agent skills by @bftelman
+# skills — agent skills by @bftelman
 
 Personal, cross-agent skills for coding agents. Each top-level folder is one skill family, packaged for
 the [`skills` CLI](https://skills.sh/) (`npx skills`) and usable as a plain copy into any agent's skills
@@ -15,9 +15,9 @@ Cross-agent (Claude Code, Cursor, Copilot / VS Code, Codex, Windsurf, OpenCode) 
 ## Install
 
 ```bash
-npx skills add bftelman/claude-skills                    # everything
-npx skills add bftelman/claude-skills -s coordinate      # one skill
-npx skills add bftelman/claude-skills -s teams
+npx skills add bftelman/skills                    # everything
+npx skills add bftelman/skills -s coordinate      # one skill
+npx skills add bftelman/skills -s teams
 ```
 
 Needs Node ≥ 22.20. **Manual alternative:** copy the individual skill folder (the one containing

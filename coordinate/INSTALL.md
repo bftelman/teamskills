@@ -5,7 +5,7 @@ the reviewer and holds the commit/push gate.
 
 ## 1. Install the skill
 
-- **Via the `skills` CLI (any supported agent):** `npx skills add bftelman/claude-skills -s coordinate`
+- **Via the `skills` CLI (any supported agent):** `npx skills add bftelman/skills -s coordinate`
   (needs Node ≥ 22.20).
 - **Manual:** copy the `coordinate/` folder into your agent's skills directory — Claude Code
   `~/.claude/skills/coordinate/` (or `<repo>/.claude/skills/coordinate/`); other agents use their own
